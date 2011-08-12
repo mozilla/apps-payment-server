@@ -1,0 +1,15 @@
+<script src="https://www.paypalobjects.com/js/external/dg.js"></script>
+<script>
+var target;
+var dgFlow;
+if (top.dgFlow) {
+		target = top;
+		dgFlow = top.dgFlow;
+} else {
+	target = top.opener.top;
+	dgFlow = top.opener.top.dgFlow;	
+}
+target.statusDiv.innerHTML = "Transaction completed successfully!"
+dgFlow.closeFlow();
+top.close();
+</script>

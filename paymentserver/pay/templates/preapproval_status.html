@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block page_title %}Firefox Pay{% endblock page_title %}
+{% block content %}
+
+<style>
+#content {
+	margin-left:auto;
+	margin-right:auto;
+	width:320px;
+	padding-left:16px;
+	padding-top:24px;
+	padding-bottom:24px;
+	font:8pt Tahoma;
+	border:3px solid #ddddff;
+	border-radius:4px;
+}
+#content .label {
+	width:100px;
+	display:inline-block;
+	vertical-align:top;
+}
+#content .value {
+	width:200px;
+	display:inline-block;
+}
+#content input[type=text] {
+	width:200px;
+}
+#content input[type=submit] {
+	margin-left:100px;
+	margin-top:24px;
+	height:24px;
+	width:120px;
+}</style>
+<div id="content">
+
+<div><b>Preapproval Status:</b></div>
+
+{% if promptFakeSender %}
+
+<form method="GET" action="/preapproval_status">
+	<div class="label">Fake Sender Email:</div>
+	<div class="value"><input type="text" name="sender" value="mhanso_1311267337_per@gmail.com"></div>
+	<input type="submit" value="Load"></div>
+</form>
+
+{% else %}
+
+<div class="label">Preapproval Key:</div>
+<div class="value">{% if preapp %}{{ preapp.provider_key }}{% else %}No key{% endif %}</div>
+
+<div class="label">Status:</div>
+<div class="value">{% if queryResult %}{{ queryResult }}{% endif %}</div>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block page_title %}Firefox Pay{% endblock page_title %}
+{% block content %}
+
+<style>
+</style>
+
+<div id="content">
+
+Payment Setup:
+
+<form method="POST" action"/start_payment">
+{% csrf_token %}
+Sender (FAKE FOR TESTING): <input type="text" name="sender"/><br>
+Receiver: <input type="text" name="receiver"/><br>
+Amount: <input type="text" name="amount"/><br>
+Currency: <input type="text" name="cc" value="USD"/><br>
+<input type="submit" value="Pay">
+</div>
+
+{% endblock %}

@@ -1,0 +1,144 @@
+* {
+	margin: 0;
+}
+
+html {
+	height: 100%;
+}
+
+body{
+	height: 100%;
+  margin:0;
+  padding:0;
+  font-family:Tahoma;
+  font-size:14pt;
+}
+
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -64px; /* bottom must be -(bottom_nav's height) */
+}
+
+#top_nav
+{
+  padding:6px 4px 2px 4px;
+  height:32px;
+  font-style:normal;
+  font-size:10pt;
+  border-bottom:1px solid #ddd;
+  background-image: -moz-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+}
+
+#top_nav a
+{
+  color:black;
+}
+#top_nav a:visited
+{
+  color:black;
+}
+
+.content
+{
+  font-family: "Georgia", Times New Roman, Times, serif;
+  background-image: -moz-linear-gradient(top, #fff 0%, #f2f2ff 100%);
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:32px;
+  margin-left:32px;
+  margin-right:32px;
+  margin-top:16px;
+  font-size:14pt;
+  color:#333;
+}
+.content h2
+{
+  margin-bottom:16px;
+}
+
+.navigation
+{
+  display:inline-block;
+  float:right;
+}
+
+.searchframe
+{
+  display:inline-block;
+}
+
+#loginstatus {
+  display:inline-block;
+  margin-right:16px;
+}
+#loginstatus:hover
+{
+  background-color:#eeeeff
+}
+
+#bottom_nav
+{
+  height:52px;
+  padding:6px 4px 2px 8px;
+  font-style:normal;
+  font-size:10px;
+  border-top:1px solid #ddd;
+}
+
+#bottom_nav ul
+{
+  margin-left:0px;
+  padding-left:0px;
+}
+
+#bottom_nav li
+{
+  display:inline-block;
+  margin-right:10px;
+}
+
+.app-developer {
+  
+}
+
+.singleColumn,
+.doubleColumn,
+.tripleColumn {
+    float: left;
+    display: inline-block;
+    margin: 0 10px;
+    min-height: 1px;
+}
+
+
+button {
+    background-color: #fff;
+    border: 1px solid #bbb;
+    padding: 10px 20px;
+    font-size: 12px;
+    cursor: pointer;
+    
+    background-image: -moz-linear-gradient(top, #fff 0%, #f2f2f2 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fff), color-stop(100%, #f2f2f2));
+    
+    -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+         -o-border-radius: 5px;
+            border-radius: 5px;
+}
+
+button:active {
+    border: 1px solid #666;
+    
+    -webkit-box-shadow: 0 0 3px rgba(0,0,0,0.75) inset, 0 0 20px rgba(0,0,0,0.25) inset;
+       -moz-box-shadow: 0 0 3px rgba(0,0,0,0.75) inset, 0 0 20px rgba(0,0,0,0.25) inset;
+         -o-box-shadow: 0 0 3px rgba(0,0,0,0.75) inset, 0 0 20px rgba(0,0,0,0.25) inset;
+            box-shadow: 0 0 3px rgba(0,0,0,0.75) inset, 0 0 20px rgba(0,0,0,0.25) inset;
+}
+
+button img {
+    vertical-align: text-bottom;
+}
+

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block page_title %}PayPal Experimenting{% endblock %}</title>
+  <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+  <link rel="stylesheet" href="/static/css/base.css" type="text/css" media="screen">
+  <link rel="shortcut icon" type="image/ico" href="/static/i/favicon.ico">
+
+  <script src="https://stage.myapps.mozillalabs.com/jsapi/include.js"
+          type="text/javascript"></script>
+  <script type="text/javascript" src="/static/js/jquery.1.5.min.js"></script>
+  <script type="text/javascript" src="/static/js/site.js"></script>
+
+  <script src="https://browserid.org/include.js"></script>
+</head>
+
+<body class="apps {{ template_class }}">
+ <div class="wrapper">
+  <div id="top_nav">
+    <header>
+      <a class="home" href="/">Home</a>
+      {% block navigation %}
+
+      <div class="navigation">
+
+        <a href="/start_embedded_payment">Start Payment</a> &middot;
+        <a href="/start_preapproval">Start Preapproval</a> &middot;
+        <a href="/preapproval_status">Preapproval Status</a> 
+
+        <!--
+        <div id="loginstatus">
+        {% if acct %}
+        <a href="/account">
+          {% if acct.first_name  %}
+            {{ acct.first_name }}
+              {% if acct.last_name %}{{ acct.last_name }}{% endif %}
+          {% else %}
+            {{ acct.email }}
+          {% endif %}
+        </a>
+        {% else %}
+        <div id="signinlink" style="cursor:pointer">Sign in</div>
+        <form id="loginform" method="POST" action="/login?return_to=/">
+        {% csrf_token %}
+        <input type="hidden" id="loginassertion" name="assertion">
+        </form>
+        {% endif %}
+        </div>
+        -->
+      </div>
+      {% endblock %}
+    </header>
+  </div>
+
+  <section class="content">
+    {% block content %}{% endblock %}
+  </section>
+ </div>
+ 
+</body>
+</html>
