@@ -1,0 +1,46 @@
+#app {
+  width: 600px;
+  margin: 0 auto;
+}
+
+.products {
+  margin-top: 1em;
+}
+
+.products {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.products td {
+  padding: 0.5em;
+}
+
+.products .image {
+  height: 100px;
+  width: 100px;
+}
+
+.products .name {
+  width: 20em;
+}
+
+#glasses .image {
+  background: left center no-repeat url(img/3d_glasses.jpg);
+}
+
+#shoes .image {
+  background: left center no-repeat url(img/shoes.jpg);
+}
+
+.popover .header {
+  line-height: 2em;
+}
+.popover .content {
+  background: none;
+  border: none;
+  min-width: none;
+  overflow-x: auto;
+  line-height: 1.5em;
+  text-align: center;
+}

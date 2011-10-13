@@ -7,4 +7,5 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     # Example:
     (r'^', include('pay.urls')),
+    (r'^app/', include('app.urls')),
 )

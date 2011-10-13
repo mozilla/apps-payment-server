@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block page_title %}App{% endblock %}</title>
+  <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+  <link rel="stylesheet" href="/static/css/base.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="/static/css/app.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="/static/css/popover.css" type="text/css" media="screen">
+  <link rel="shortcut icon" type="image/ico" href="/static/i/favicon.ico">
+
+  <script src="https://stage.myapps.mozillalabs.com/jsapi/include.js"
+          type="text/javascript"></script>
+  <script type="text/javascript" src="/static/js/jquery.1.5.min.js"></script>
+  <script type="text/javascript" src="/static/js/popover.js"></script>
+  <script type="text/javascript" src="/static/js/app.js"></script>
+
+  <script src="https://browserid.org/include.js"></script>
+</head>
+
+<body class="apps {{ template_class }}">
+ <div class="wrapper">
+  <div id="top_nav">
+    <header>
+      <a class="home" href="/">Home</a>
+    </header>
+  </div>
+
+  <section class="content">
+    <div id="app">
+      <h1>Ice Palace Crusaders</h1>
+      <p>Before you begin playing the next level you probably want one of these:</p>
+      <table class="products">
+        <tr id="glasses">
+          <td class="image"></td>
+          <td class="name">3D Glasses</td>
+          <td class="price">$3.99</td>
+          <td><button>Buy</button></td>
+        </tr>
+        <tr id="shoes">
+          <td class="image"></td>
+          <td class="name">Shoes</td>
+          <td class="price">$2.99</td>
+          <td><button>Buy</button></td>
+        </tr>
+      </table>
+    </div>
+  </section>
+ </div>
+
+<div class="popover" id="pay-dialog">
+  <div class="p-header">Mozilla Payments</div>
+  <div class="p-content">
+    (form goes here)
+  </div>
+</div>
+
+</body>
+</html>
