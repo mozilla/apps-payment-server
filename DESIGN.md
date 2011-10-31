@@ -67,7 +67,7 @@ One system that satisfies these requirements would look like this (it's broadly 
 	        description: "The shiniest pony of all!",
 	        productdata: "ABC123_DEF456_GHI_789.XYZ"
 	    }
-	} <signed-with-AppOperatorSecret-HMAC256>
+	} (signed-with-AppOperatorSecret-HMAC256)
 </pre>
 
 4. The App directs the user's browser to a JavaScript buy method with this Payment Request, this method is imported from a JavaScript file loaded from ```https://marketplace.mozilla.org```.  The ```buy``` method would take the Payment Request object, a success callback, and a failure callback.
@@ -121,7 +121,7 @@ The flow once we hit the lightbox/popup box is:
         response: {
             transactionID: "123456123456123456"
         }
-    } <signed-with-AppOperatorSecret-HMAC256>
+    } (signed-with-AppOperatorSecret-HMAC256)
 </pre>
 
 
@@ -157,7 +157,8 @@ Future Goals: Support for Web Activities
 
 The system described here assumes that the app supports only one payment API provider.  We could support more user choice by abstracting up a layer from here.  If, for example, the app called:
 
-    navigator.apps.startActivity ( new Activity ( PAY, supportedProviderList, requestCallback, successCallback, failureCallback ) )
+    navigator.apps.startActivity ( new Activity ( PAY, supportedProviderList, requestCallback, 
+        successCallback, failureCallback ) )
 
 ... and the browser presented a list of PAY-providers, perhaps filtered by supportedProviderList, invoking the request callback when the user picked one.  The request callback would have to do the JWT-generation (signing with the appropriate Payment Secret for the selected provider), and then return to the browser, who would deliver the call to the payment provider and continue the flow.
 
