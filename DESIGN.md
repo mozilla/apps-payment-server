@@ -42,47 +42,79 @@ One system that satisfies these requirements would look like this (it's broadly 
 
 1. Mozilla and App Operator agree on a Payment Secret and a Postback URL.  The App Operator saves the secret on his server.
 
+    AppOperator: "Mozilla, please give me a secret.  My postback URL is http://app/postback"
+    
+    Mozilla: "Okay, AppOperator, your key is ABC and your secret is 123456."
+
 2. The user interacts with App, eventually triggering a purchase interaction
 
 3. The App generates a Payment Request, which contains all of the information about the item being purchased: price, currency, name, human-readable description, machine-readable blob, and signs it with his Payment Secret, and encodes the whole thing as a JWT.
 
-4. The App directs the user's browser to a JavaScript buy method with this Payment Request, this method is imported from a JavaScript file loaded from https://marketplace.mozilla.org.  It would look a lot like Google's API - a JSON blob with payment details, a success callback, a failure callback.
+    {
+    	price: 1.99,
+    	currency: "USD",
+    	name: "Elite Sparkle Pony",
+    	description: "The shiniest pony of all!",
+    	productdata: "ABC123_DEF456_GHI_789.XYZ"
+    } <signed-with-AppOperatorSecret-HMAC256>
 
-5. The buy method opens a popup box (if no session with payments.mozilla.org is active) or a lightbox (if one is).  The flow in this box is:
+4. The App directs the user's browser to a JavaScript buy method with this Payment Request, this method is imported from a JavaScript file loaded from ```https://marketplace.mozilla.org```.  The ```buy``` method would take the Payment Request object, a success callback, and a failure callback.
 
-5a.  User authenticated to marketplace.mozilla.org?
+    moz.buy(theRequestObject, onBuySuccess, onBuyFailure)
 
-5a.1.  If no, user prompted to BrowserID authenticate.  The app MAY provide an identity hint in 5 if it think it knows who the user is.  Text would be something like, "To complete your purchase of Elite Sparkle Pony, please SIGN IN to Mozilla!".  Note that if we have sign-in-to-the-browser, this step is easy, but we still have the "wrong user" problem.
+5. The buy method opens a popup box (if no session with ```marketplace.mozilla.org``` is active) or a lightbox (if one is).  
 
-5.b. Does this marketplace account have a preauthorized payment token?
+The flow once we hit the lightbox/popup box is:
 
-5.b.1. If no, user prompted to begin full-screen PayPal PreAuthz flow.  At completion of this flow, the preauth token is saved in the user database and the flow proceeds to 5c.  (potentially tricky if 5a was in a popup: need to follow window.opener, and it could have been closed; do we have a way to get back on the rails?)
+ 1.  User authenticated to marketplace.mozilla.org?
 
-5c. Obtain a PIN for the user - this could be prompting every time, or using some short-lived client- or server-side scheme.
+ 2.  If no, user prompted to BrowserID authenticate.  The app MAY provide an identity hint if it think it knows who the user is.  Text would be something like, "To complete your purchase of Elite Sparkle Pony, please SIGN IN to Mozilla!".  Note that if we have sign-in-to-the-browser, this step is easier, but we still need to support fast user-switch.
 
-5d. Present purchase to user for confirmation, with name, description, and identifying information from Mozilla about the seller.  This can include their name, URL, contact information, and whatever reputation data we might want to include.  (Perhaps we highlight if they are a brand-new business, for example).
+ 3. Does this marketplace account have a preauthorized payment token?
 
-5e. User confirms purchase, or cancels
+ 4. If no, user prompted to begin full-screen PayPal PreAuthz flow.  At completion of this flow, the preauth token is saved in the user database and the flow proceeds to 5.  (this can potentially be tricky if step #1 was in a popup: need to follow window.opener, and it could have been closed; do we have a way to get back on the rails?)
 
-5e.1. If cancel, return flow to failure callback of buy method.
+ 5. Obtain a PIN for the user - this could be prompting every time, or using some short-lived client- or server-side scheme.
 
-5f. Submit purchase call to PayPal with preauth token, PIN, Mozilla secrets, and payment details, including merchant account pulled from seller's developer account.
+ 6. Present purchase to user for confirmation, with name, description, and identifying information from Mozilla about the seller.  This can include their name, URL, contact information, and whatever reputation data we might want to include.  (Perhaps we highlight if they are a brand-new business, for example).
 
-5f.1. If failure, return flow to failure callback of buy method
+ 7. User confirms purchase, or cancels
 
-5g. If success, return flow to success callback of buy method with transaction ID
+ 8. If cancel, return flow to failure callback of buy method.
 
-5h. marketplace.mozilla.org POSTs a confirmation message to the Postback URL for the seller.  This confirmation message contains all the payment request fields, plus a transaction ID, and is signed with the seller's Payment Secret.
+ 9. Submit purchase call to PayPal with preauth token, PIN, Mozilla secrets, and payment details, including merchant account pulled from seller's developer account.
 
-5i. Seller must respond to the postback with the transaction ID.
+ 10. If failure, return flow to failure callback of buy method
 
-5j. The seller may proceed with confidence that the payment will probably complete.  Chargebacks will be delivered through a notification API at a much later time, and are the seller's responsibility to convey to the user.
+ 11. If success, return flow to success callback of buy method with transaction ID
+
+ 12. ```marketplace.mozilla.org``` POSTs a confirmation message to the Postback URL for the seller.  This confirmation message contains all the payment request fields, plus a transaction ID, and is signed with the seller's Payment Secret.
+
+    {
+    	request: {
+			price: 1.99,
+			currency: "USD",
+			name: "Elite Sparkle Pony",
+			description: "The shiniest pony of all!",
+			productdata: "ABC123_DEF456_GHI789.XYZ",
+		}
+	    response: {
+	    	transactionID: "123456123456123456"
+	    }
+	} <signed-with-AppOperatorSecret-HMAC256>
+
+ 13. Seller must respond to the postback with the transaction ID.
+
+     123456123456123456
+
+ 14. The seller may proceed with confidence that the payment will probably complete.  Chargebacks will be delivered through a notification API at a much later time, and are the seller's responsibility to convey to the user.
 
 How the outline corresponds to the threat model:
+------------------------------------------------
 
 Threat 1 is addressed by requiring the user to be present for purchase confirmation. We know the user is present because she presented her PIN, and because the interaction with marketplace was authenticated by a BrowserID assertion which verifies her email address.
 
-Threat 2 is addressed by the Postback flow in 5h-i.  By confirming the purchase, the seller provides legally-enforcable proof that he received the payment; refusal to provide the services or content at that point is fraud.  Mozilla may need to provide proof of this step to a payment card processor for fraud investigation.
+Threat 2 is addressed by the Postback flow in steps 12 and 13.  By confirming the purchase, the seller provides enforcable proof that he received the payment; refusal to provide the services or content at that point is fraud.  Mozilla may need to provide proof of this step to a payment card processor for fraud investigation.
 
 Threat 3 is addressed by using a preauthorization secret that is known only to Mozilla following the PayPal preauthorization flow.  Even if an attacker was able to man-in-the-middle the SSL connection for marketplace.mozilla.org, and fraudulently acquire a BrowserID assertion for the user, they would not have this secret.  The attacker could conceivably drive the user to PayPal for a new run through the preauthorization flow, but at that point they would be subject to PayPal's anti-fraud measures, which should detect the attack.
 
@@ -101,7 +133,7 @@ Future Goals: Support for Web Activities
 
 The system described here assumes that the app supports only one payment API provider.  We could support more user choice by abstracting up a layer from here.  If, for example, the app called:
 
-navigator.apps.startActivity ( new Activity ( PAY, supportedProviderList, requestCallback, successCallback, failureCallback ) )
+```navigator.apps.startActivity ( new Activity ( PAY, supportedProviderList, requestCallback, successCallback, failureCallback ) )```
 
 ... and the browser presented a list of PAY-providers, perhaps filtered by supportedProviderList, invoking the request callback when the user picked one.  The request callback would have to do the JWT-generation (signing with the appropriate Payment Secret for the selected provider), and then return to the browser, who would deliver the call to the payment provider and continue the flow.
 
