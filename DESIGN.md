@@ -42,25 +42,39 @@ One system that satisfies these requirements would look like this (it's broadly 
 
 1. Mozilla and App Operator agree on a Payment Secret and a Postback URL.  The App Operator saves the secret on his server.
 
+<pre>
     AppOperator: "Mozilla, please give me a secret.  My postback URL is http://app/postback"
     
     Mozilla: "Okay, AppOperator, your key is ABC and your secret is 123456."
+</pre>
 
 2. The user interacts with App, eventually triggering a purchase interaction
 
 3. The App generates a Payment Request, which contains all of the information about the item being purchased: price, currency, name, human-readable description, machine-readable blob, and signs it with his Payment Secret, and encodes the whole thing as a JWT.
 
-    {
-    	price: 1.99,
-    	currency: "USD",
-    	name: "Elite Sparkle Pony",
-    	description: "The shiniest pony of all!",
-    	productdata: "ABC123_DEF456_GHI_789.XYZ"
-    } <signed-with-AppOperatorSecret-HMAC256>
+<pre>
+	{
+		iss: "ABC",
+		aud: "marketplace.mozilla.org",
+		typ: "mozilla/payments/pay/v1",
+		exp: (now + an hour),
+		iat: now,
+		request:
+	    {
+	        price: 1.99,
+	        currency: "USD",
+	        name: "Elite Sparkle Pony",
+	        description: "The shiniest pony of all!",
+	        productdata: "ABC123_DEF456_GHI_789.XYZ"
+	    }
+	} <signed-with-AppOperatorSecret-HMAC256>
+</pre>
 
 4. The App directs the user's browser to a JavaScript buy method with this Payment Request, this method is imported from a JavaScript file loaded from ```https://marketplace.mozilla.org```.  The ```buy``` method would take the Payment Request object, a success callback, and a failure callback.
 
+<pre>
     moz.buy(theRequestObject, onBuySuccess, onBuyFailure)
+</pre>
 
 5. The buy method opens a popup box (if no session with ```marketplace.mozilla.org``` is active) or a lightbox (if one is).  
 
@@ -90,22 +104,32 @@ The flow once we hit the lightbox/popup box is:
 
  12. ```marketplace.mozilla.org``` POSTs a confirmation message to the Postback URL for the seller.  This confirmation message contains all the payment request fields, plus a transaction ID, and is signed with the seller's Payment Secret.
 
+<pre>
     {
-    	request: {
-			price: 1.99,
-			currency: "USD",
-			name: "Elite Sparkle Pony",
-			description: "The shiniest pony of all!",
-			productdata: "ABC123_DEF456_GHI789.XYZ",
-		}
-	    response: {
-	    	transactionID: "123456123456123456"
-	    }
-	} <signed-with-AppOperatorSecret-HMAC256>
+    	iss: "marketplace.mozilla.org",
+    	aud: "ABC",
+    	typ: "mozilla/payments/pay/postback/v1",
+    	iat: (now),
+    	exp: (now + 1 hour),
+        request: {
+            price: 1.99,
+            currency: "USD",
+            name: "Elite Sparkle Pony",
+            description: "The shiniest pony of all!",
+            productdata: "ABC123_DEF456_GHI789.XYZ",
+        }
+        response: {
+            transactionID: "123456123456123456"
+        }
+    } <signed-with-AppOperatorSecret-HMAC256>
+</pre>
+
 
  13. Seller must respond to the postback with the transaction ID.
 
-     123456123456123456
+<pre>
+    123456123456123456
+</pre>
 
  14. The seller may proceed with confidence that the payment will probably complete.  Chargebacks will be delivered through a notification API at a much later time, and are the seller's responsibility to convey to the user.
 
@@ -133,7 +157,7 @@ Future Goals: Support for Web Activities
 
 The system described here assumes that the app supports only one payment API provider.  We could support more user choice by abstracting up a layer from here.  If, for example, the app called:
 
-```navigator.apps.startActivity ( new Activity ( PAY, supportedProviderList, requestCallback, successCallback, failureCallback ) )```
+    navigator.apps.startActivity ( new Activity ( PAY, supportedProviderList, requestCallback, successCallback, failureCallback ) )
 
 ... and the browser presented a list of PAY-providers, perhaps filtered by supportedProviderList, invoking the request callback when the user picked one.  The request callback would have to do the JWT-generation (signing with the appropriate Payment Secret for the selected provider), and then return to the browser, who would deliver the call to the payment provider and continue the flow.
 
