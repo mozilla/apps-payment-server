@@ -51,9 +51,11 @@ One system that satisfies these requirements would look like this (it's broadly 
 5. The buy method opens a popup box (if no session with payments.mozilla.org is active) or a lightbox (if one is).  The flow in this box is:
 
 5a.  User authenticated to marketplace.mozilla.org?
+
 5a.1.  If no, user prompted to BrowserID authenticate.  The app MAY provide an identity hint in 5 if it think it knows who the user is.  Text would be something like, "To complete your purchase of Elite Sparkle Pony, please SIGN IN to Mozilla!".  Note that if we have sign-in-to-the-browser, this step is easy, but we still have the "wrong user" problem.
 
 5.b. Does this marketplace account have a preauthorized payment token?
+
 5.b.1. If no, user prompted to begin full-screen PayPal PreAuthz flow.  At completion of this flow, the preauth token is saved in the user database and the flow proceeds to 5c.  (potentially tricky if 5a was in a popup: need to follow window.opener, and it could have been closed; do we have a way to get back on the rails?)
 
 5c. Obtain a PIN for the user - this could be prompting every time, or using some short-lived client- or server-side scheme.
@@ -61,9 +63,11 @@ One system that satisfies these requirements would look like this (it's broadly 
 5d. Present purchase to user for confirmation, with name, description, and identifying information from Mozilla about the seller.  This can include their name, URL, contact information, and whatever reputation data we might want to include.  (Perhaps we highlight if they are a brand-new business, for example).
 
 5e. User confirms purchase, or cancels
+
 5e.1. If cancel, return flow to failure callback of buy method.
 
 5f. Submit purchase call to PayPal with preauth token, PIN, Mozilla secrets, and payment details, including merchant account pulled from seller's developer account.
+
 5f.1. If failure, return flow to failure callback of buy method
 
 5g. If success, return flow to success callback of buy method with transaction ID
