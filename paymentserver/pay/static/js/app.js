@@ -1,7 +1,6 @@
 $(function() {
     "use strict";
-    var signedRequest = {}, // todo on server
-        onPaySuccess,
+    var onPaySuccess,
         onPayFailure;
 
     function onPaySuccess() {
@@ -11,6 +10,7 @@ $(function() {
     }
 
     $('.products button').click(function(evt) {
+        var signedRequest = $(evt.currentTarget).attr('data-request');
         window.mozPay(signedRequest, onPaySuccess, onPayFailure,
                       {clickTarget: evt.currentTarget});
     });

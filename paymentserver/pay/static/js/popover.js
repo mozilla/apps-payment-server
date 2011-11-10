@@ -130,7 +130,11 @@ $.fn.popover = function(options) {
     button.bind('showPopover', function() { showPopover(button) });
     button.bind('hidePopover', function() { hidePopover(button); });
     $('button.cancel', button.parents()).click(function() { hidePopover(button); });
-    $('button.pay', button.parents()).click(function() { hidePopover(button); });
+    $('button.pay', button.parents()).click(function() {
+        options.processPayment(function() {
+            hidePopover(button);
+        });
+    });
   });
 
   this.each(function(i, elem) {
