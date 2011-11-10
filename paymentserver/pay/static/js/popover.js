@@ -6,11 +6,23 @@ $.fn.popover = function(options) {
     offsetX: 0,
     offsetY: 0
   }
-  var options = $.extend(defaults, options);
+  var options = $.extend(defaults, options),
+      popupInit = false;
+
+  this.each(function(i, elem) {
+    if ($(elem).attr('data-popover') == '1') {
+      popupInit = true;
+    }
+  });
+  if (popupInit) {
+    // Already initialized popup for this selector.
+    // NOTE: does not support reconfiguration of the popup via options.
+    return;
+  }
 
   // HTML floater box
-  var header = $(options.header).detach();
-  var content = $(options.content).detach();
+  var header = $(options.header).clone();
+  var content = $(options.content).clone();
   var floater = $('<div class="popover">'
         + '<div class="triangle"></div>'
         + '<div class="header"></div>'
@@ -100,7 +112,7 @@ $.fn.popover = function(options) {
   this.each(function(){
     var button = $(this);
     button.addClass("popover-button");
-    button.bind('click', function() { showPopover(button) });
+    button.bind('openpaydialog', function() { showPopover(button) });
     button.bind('showPopover', function() { showPopover(button) });
     button.bind('hidePopover', function() {
       button.removeClass('popover-on');
@@ -115,6 +127,11 @@ $.fn.popover = function(options) {
       }, 0);
       return false;
     });
+  });
+
+  this.each(function(i, elem) {
+    // Initialization has been done.
+    $(elem).attr('data-popover', '1');
   });
 }
 })(jQuery);
