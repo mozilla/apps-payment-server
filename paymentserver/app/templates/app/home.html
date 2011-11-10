@@ -12,6 +12,7 @@
           type="text/javascript"></script>
   <script type="text/javascript" src="/static/js/jquery.1.5.min.js"></script>
   <script type="text/javascript" src="/static/js/popover.js"></script>
+  <script type="text/javascript" src="/static/js/pay.js"></script>
   <script type="text/javascript" src="/static/js/app.js"></script>
 
   <script src="https://browserid.org/include.js"></script>
@@ -30,27 +31,35 @@
       <h1>Ice Palace Crusaders</h1>
       <p>Before you begin playing the next level you probably want one of these:</p>
       <table class="products">
-        <tr id="glasses">
+        {% for product in all_products %}
+        <tr id="{{ product.code }}">
           <td class="image"></td>
-          <td class="name">3D Glasses</td>
-          <td class="price">$3.99</td>
+          <td class="name">{{ product.description }}</td>
+          <td class="price">${{ product.price }}</td>
           <td><button>Buy</button></td>
         </tr>
-        <tr id="shoes">
-          <td class="image"></td>
-          <td class="name">Shoes</td>
-          <td class="price">$2.99</td>
-          <td><button>Buy</button></td>
-        </tr>
+        {% endfor %}
       </table>
     </div>
   </section>
  </div>
 
+<!-- This HTML would be defined in the WebRT chrome -->
 <div class="popover" id="pay-dialog">
   <div class="p-header">Mozilla Payments</div>
   <div class="p-content">
-    (form goes here)
+    <form class="moz-payment">
+      <div class="form-row">
+        <input checked="checked" type="radio" name="payment_method" value="carrier" />
+        <label>Bill my T-Mobile account</label>
+      </div>
+      <div class="form-row">
+        <input type="radio" name="payment_method" value="cc" />
+        <label>Pay with PayPal</label>
+      </div>
+    </form>
+    <button class="pay">Pay</button>
+    <button class="cancel">Cancel</button>
   </div>
 </div>
 

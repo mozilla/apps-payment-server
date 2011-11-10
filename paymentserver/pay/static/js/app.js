@@ -1,10 +1,17 @@
 $(function() {
-  "use strict";
+    "use strict";
+    var signedRequest = {}, // todo on server
+        onPaySuccess,
+        onPayFailure;
 
-  // todo: hack apart the plugin so we can do:
-  // $('.products button').click(function() { window.mozPay(...); });
-  $('.products button').popover({
-      header: '#pay-dialog > .p-header',
-      content: '#pay-dialog > .p-content'
-  });
+    function onPaySuccess() {
+    }
+
+    function onPayFailure() {
+    }
+
+    $('.products button').click(function(evt) {
+        window.mozPay(signedRequest, onPaySuccess, onPayFailure,
+                      {clickTarget: evt.currentTarget});
+    });
 });

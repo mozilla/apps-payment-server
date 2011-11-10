@@ -26,10 +26,10 @@ $.fn.popover = function(options) {
   var floater = $('<div class="popover">'
         + '<div class="triangle"></div>'
         + '<div class="header"></div>'
-        + '<div class="content"></div>'
+        + '<div class="p-content"></div>'
         + '</div>').appendTo('body');
   $('.header', floater).append(header);
-  $('.content', floater).append(content);
+  $('.p-content', floater).append(content);
 
   // Document click closes active popover
   $.fn.popover.openedPopup = null;
@@ -109,24 +109,28 @@ $.fn.popover = function(options) {
     return false;
   }
 
+  var hidePopover = function(button) {
+    button.removeClass('popover-on');
+    floater.removeClass("active").attr("style", "").css('display', 'none');
+    if ($.isFunction(options.closeEvent)) {
+      options.closeEvent();
+    }
+    $.fn.popover.openedPopup = null;
+    window.setTimeout(function() {
+      // Fixes some browser bugs
+      $(window).resize();
+    }, 0);
+    return false;
+  };
+
   this.each(function(){
     var button = $(this);
     button.addClass("popover-button");
     button.bind('openpaydialog', function() { showPopover(button) });
     button.bind('showPopover', function() { showPopover(button) });
-    button.bind('hidePopover', function() {
-      button.removeClass('popover-on');
-      floater.removeClass("active").attr("style", "").css('display', 'none');
-      if ($.isFunction(options.closeEvent)) {
-        options.closeEvent();
-      }
-      $.fn.popover.openedPopup = null;
-      window.setTimeout(function() {
-        // Fixes some browser bugs
-        $(window).resize();
-      }, 0);
-      return false;
-    });
+    button.bind('hidePopover', function() { hidePopover(button); });
+    $('button.cancel', button.parents()).click(function() { hidePopover(button); });
+    $('button.pay', button.parents()).click(function() { hidePopover(button); });
   });
 
   this.each(function(i, elem) {

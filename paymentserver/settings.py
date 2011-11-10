@@ -126,3 +126,6 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 )
 
+# Imagine this is a key/secret that the marketplace assigns to an app.
+APP_OPERATOR_KEY = 'APP-123'
+APP_OPERATOR_SECRET = 'ailkdjfad8s07f509pyp9bojb[oho{UHGDO{UHGO_Uo96976'

@@ -36,11 +36,18 @@
 .popover .header {
   line-height: 2em;
 }
-.popover .content {
+.popover .p-content {
+  padding: 0.5em;
   background: none;
   border: none;
   min-width: none;
   overflow-x: auto;
   line-height: 1.5em;
   text-align: center;
+}
+.popover .form-row {
+    text-align: left;
+}
+.popover form.moz-payment {
+    margin-bottom: 1em;
 }
