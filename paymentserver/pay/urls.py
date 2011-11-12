@@ -23,8 +23,11 @@ urlpatterns = patterns(
     (r'^paypal/embedded_return$', paypal_embedded_return),
     (r'^paypal/embedded_cancel$', paypal_embedded_cancel),
     (r'^preapproval_status$', preapproval_query),
-    
 
+    url(r'^marketplace/submit_app_payment$', submit_app_payment,
+        name='marketplace.submit_app_payment'),
+    url(r'^marketplace/start_app_payment$', start_app_payment,
+        name='marketplace.start_app_payment'),
 
     # static
     # FIXME: NEED TO REPLACE THIS with django 1.3 goodness at some point

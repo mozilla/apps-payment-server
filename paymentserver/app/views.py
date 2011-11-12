@@ -4,6 +4,7 @@ import json
 
 from django.conf import settings
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 import jwt
 
@@ -12,12 +13,17 @@ def home(request):
     all_products = [Product(code='glasses',
                             name='Virtual 3D Glasses',
                             description='Virtual 3D Glasses',
-                            price=Decimal('3.99')),
+                            price=Decimal('0.99')),
                     Product(code='shoes',
                             name='Virtual Shoes',
                             description='Virtual Shoes',
-                            price=Decimal('2.99'))]
+                            price=Decimal('0.99'))]
     return render(request, 'app/home.html', {'all_products': all_products})
+
+
+@csrf_exempt
+def payment_succeeded(request):
+    pass
 
 
 class Product(object):
@@ -28,8 +34,8 @@ class Product(object):
         self.name = name
         self.description = description
         request = json.dumps({
-            'iss': "marketplace.mozilla.org",
-            'aud': "ABC",
+            'iss': settings.APP_OPERATOR_KEY,
+            'aud': "marketplace.mozilla.org",
             'typ': "mozilla/payments/pay/v1",
             'exp': (datetime.now() + timedelta(hours=1)).isoformat(),
             'iat': datetime.now().isoformat(),

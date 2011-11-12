@@ -12,7 +12,7 @@
           type="text/javascript"></script>
   <script type="text/javascript" src="/static/js/jquery.1.5.min.js"></script>
   <script type="text/javascript" src="/static/js/popover.js"></script>
-  <script type="text/javascript" src="/static/js/pay.js"></script>
+  <script type="text/javascript" src="/static/js/fxmarket.js"></script>
   <script type="text/javascript" src="/static/js/app.js"></script>
 
   <script src="https://browserid.org/include.js"></script>
@@ -44,18 +44,20 @@
   </section>
  </div>
 
-<!-- This HTML would be defined in the WebRT chrome -->
-<div class="popover" id="pay-dialog">
+<!-- This HTML would be defined in the WebRT chrome. Maybe. -->
+<div class="popover" id="pay-dialog"
+     data-start-url="{% url marketplace.start_app_payment %}"
+     data-submit-url="{% url marketplace.submit_app_payment %}">
   <div class="p-header">Mozilla Payments</div>
   <div class="p-content">
     <p class="action"></p>
     <form class="moz-payment">
       <div class="form-row">
-        <input checked="checked" type="radio" name="payment_method" value="carrier" />
+        <input checked="checked" type="radio" class="payment_method" name="payment_method" value="carrier" />
         <label>Bill my T-Mobile account</label>
       </div>
       <div class="form-row">
-        <input type="radio" name="payment_method" value="cc" />
+        <input type="radio" class="payment_method" name="payment_method" value="paypal" />
         <label>Pay with PayPal</label>
       </div>
     </form>

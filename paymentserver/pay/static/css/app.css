@@ -48,6 +48,9 @@
 .popover .form-row {
     text-align: left;
 }
+.popover p.action {
+  margin-bottom: 0.5em;
+}
 .popover form.moz-payment {
     margin-bottom: 1em;
 }

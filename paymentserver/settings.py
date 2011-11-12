@@ -111,6 +111,12 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'pay.context_processors.base',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+)
+
 INSTALLED_APPS = (
 #    'django.contrib.auth',
 #    'django.contrib.contenttypes',
@@ -129,3 +135,5 @@ INSTALLED_APPS = (
 # Imagine this is a key/secret that the marketplace assigns to an app.
 APP_OPERATOR_KEY = 'APP-123'
 APP_OPERATOR_SECRET = 'ailkdjfad8s07f509pyp9bojb[oho{UHGDO{UHGO_Uo96976'
+APP_OPERATOR_POSTBACK_URL = '/app/payment_suceeded'
+APP_SECRETS = {APP_OPERATOR_KEY: APP_OPERATOR_SECRET}

@@ -2,11 +2,14 @@
 Views for Firefox Pay
 
 """
+import json
 
 from django.views.generic.simple import *
+from django.views.decorators.csrf import csrf_exempt
 from django import forms
 from django.http import HttpResponse
 import django.conf
+from django.conf import settings
 import models
 import urlparse
 import idassertion
@@ -15,6 +18,8 @@ import json
 import datetime
 import math
 import config
+
+import jwt
 
 log = logging.getLogger("pay")
 log.setLevel(logging.DEBUG)
@@ -41,7 +46,7 @@ def logout(request):
   if request.GET.has_key("return_to"):
     return HttpResponseRedirect("/" + request.GET["return_to"])
   else:
-    return HttpResponseRedirect("/")  
+    return HttpResponseRedirect("/")
 
 def login(request):
   if request.method == "POST":
@@ -51,7 +56,7 @@ def login(request):
       try:
         email = idassertion.verify(usersid)
         request.session["verified_email"] = email
-        
+
         if request.POST.has_key("return_to"):
           # XX beware of XSRF attacks here
           return HttpResponseRedirect("/" + request.POST["return_to"])
@@ -84,25 +89,25 @@ def start_payment(request):
         # HACK fake out sender
         # acct = get_account(request.session["verified_email"])
         if not request.POST.has_key("sender"):
-          return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter receiver"})          
+          return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter receiver"})
         acct = models.Account.objects.get_or_create(email=request.POST["sender"])[0]
 
         if not request.POST.has_key("receiver"):
-          return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter receiver"})          
+          return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter receiver"})
         if not request.POST.has_key("amount"):
           return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter amount"})
         if not request.POST.has_key("cc"):
           return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter cc"})
-        
+
         log.debug("Starting payment constructor")
         payment = models.Payment(account=acct, receiver=request.POST["receiver"], amount=request.POST["amount"], currencyCode=request.POST["cc"])
         log.debug("Calling payment setup")
-        
+
         # Bah, this is really slow.  Tornado/twisted/Node FTW?
         payment.setup()
         if payment.processing_error:
           # whoops, didn't work
-          return direct_to_template(request, 'error.html', {"errormsg": payment.processing_error})          
+          return direct_to_template(request, 'error.html', {"errormsg": payment.processing_error})
         else:
           if payment.isComplete():
             # Had preapproval, hooray
@@ -119,7 +124,7 @@ def start_payment(request):
         # acct = get_account(request.session["verified_email"]) fake out account for now
         return direct_to_template(request, 'payment_setup.html')
       except:
-        return direct_to_template(request, 'error.html', {"errormsg": "Must have an account"})        
+        return direct_to_template(request, 'error.html', {"errormsg": "Must have an account"})
   else:
     return direct_to_template(request, 'error.html', {"errormsg": "Must be logged in"})
 
@@ -144,11 +149,11 @@ def init_embedded_payment(request):
           return HttpResponse({"status": "failure", "errormsg": "Missing required 'amount'"}, mimetype='application/json')
         if not request.POST.has_key("cc"):
           return HttpResponse({"status": "failure", "errormsg": "Missing required 'cc'"}, mimetype='application/json')
-        
+
         log.debug("Starting payment constructor for embedded payment")
         payment = models.Payment(account=acct, receiver=request.POST["receiver"], amount=request.POST["amount"], currencyCode=request.POST["cc"])
         log.debug("Calling payment setup for embedded payment")
-        
+
         # Bah, this is really slow.  Tornado/twisted/Node FTW?
         payment.setup()
         if payment.processing_error:
@@ -193,7 +198,7 @@ def paypal_embedded_cancel(request):
   else:
     log.error("paypal_cancel called with no session")
 
-    
+
 def start_preapproval(request):
   if True or request.session.has_key("verified_email"):
     if request.method == "POST":
@@ -201,24 +206,24 @@ def start_preapproval(request):
         # HACK XXX fake out sender
         # acct = get_account(request.session["verified_email"])
         if not request.POST.has_key("sender"):
-          return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter receiver"})          
+          return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter receiver"})
         acct = models.Account.objects.get_or_create(email=request.POST["sender"])[0]
 
         if not request.POST.has_key("amount"):
-          return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter receiver"})          
-        
+          return direct_to_template(request, 'error.html', {"errormsg": "Missing required parameter receiver"})
+
         log.debug("Starting payment constructor")
 
         # XXX this should be unique on user
 
         preapproval = models.Preapproval(account=acct, amount=request.POST["amount"])
         log.debug("Calling payment setup")
-        
+
         # Bah, this is really slow.  Tornado/twisted/Node FTW?
         preapproval.setup()
         if preapproval.processing_error:
           # whoops, didn't work
-          return direct_to_template(request, 'error.html', {"errormsg": preapproval.processing_error})          
+          return direct_to_template(request, 'error.html', {"errormsg": preapproval.processing_error})
         else:
           return HttpResponseRedirect("https://www.sandbox.paypal.com/webscr?cmd=_ap-preapproval&preapprovalkey=%s" % preapproval.provider_key)
       except Exception, e:
@@ -228,9 +233,9 @@ def start_preapproval(request):
         #acct = get_account(request.session["verified_email"]) fake out account for now
         return direct_to_template(request, 'preapproval_setup.html')
       except:
-        return direct_to_template(request, 'error.html', {"errormsg": "Must have an account"})        
+        return direct_to_template(request, 'error.html', {"errormsg": "Must have an account"})
   else:
-    return direct_to_template(request, 'error.html', {"errormsg": "Must be logged in"})    
+    return direct_to_template(request, 'error.html', {"errormsg": "Must be logged in"})
 
 
 def paypal_return(request):
@@ -299,4 +304,46 @@ def preapproval_query(request):
       pass
     return direct_to_template(request, 'preapproval_status.html', {"acct":acct, "preapp":preapp, "queryResult":queryResult, "promptFakeSender":False})
   else:
-    return HttpResponseRedirect("/")  
+    return HttpResponseRedirect("/")
+
+
+def as_json(handler):
+  def makejson(*args, **kwargs):
+    try:
+      res = handler(*args, **kwargs)
+    except:
+      log.exception('Exception:')
+      raise
+    return HttpResponse(json.dumps(res),
+                        mimetype='application/json',
+                        status=200 )
+  return makejson
+
+
+def decode_request(signed_request):
+  app_req = jwt.decode(signed_request, verify=False)
+  app_req = json.loads(app_req)
+  secret =  settings.APP_SECRETS[app_req['iss']]  # iss is the app key
+  jwt.decode(signed_request, secret, verify=True)
+  return app_req
+
+
+@csrf_exempt
+@as_json
+def start_app_payment(request):
+  app_req = decode_request(str(request.POST['signed_request']))
+  # pretend this is after:
+  #   - user gets logged in through browser ID
+  #   - transaction is started, user ID is part of transaction
+  return {'valid': True, 'request': app_req['request'],
+          'transaction_id': 1234}
+
+
+@csrf_exempt
+@as_json
+def submit_app_payment(request):
+  app_req = decode_request(str(request.POST['signed_request']))
+  # pretend it went through successfully!
+  # this means the transaction is *pending*
+  return {'successful': True, 'transaction_id': 1234,
+          'request': app_req['request']}
