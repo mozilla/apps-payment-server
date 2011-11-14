@@ -9,4 +9,8 @@ install like this:
 To get things set up, run:
 
     python paymentserver/manage.py syncdb
-    python paymentserver/manage.py runserver
+    python paymentserver/manage.py runserver 0.0.0.0:8380
+
+To make the paypal redirects work you must currently run everything from:
+
+    http://localhost:8380/
