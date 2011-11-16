@@ -5,7 +5,6 @@ Views for Firefox Pay
 import json
 
 from django.views.generic.simple import *
-from django.views.decorators.csrf import csrf_exempt
 from django import forms
 from django.http import HttpResponse
 import django.conf
@@ -328,7 +327,6 @@ def decode_request(signed_request):
   return app_req
 
 
-@csrf_exempt
 @as_json
 def start_app_payment(request):
   app_req = decode_request(str(request.POST['signed_request']))
@@ -339,7 +337,6 @@ def start_app_payment(request):
           'transaction_id': 1234}
 
 
-@csrf_exempt
 @as_json
 def submit_app_payment(request):
   app_req = decode_request(str(request.POST['signed_request']))

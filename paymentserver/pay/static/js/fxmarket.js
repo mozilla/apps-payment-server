@@ -20,7 +20,8 @@ exports.buy = function(signedRequest, onPaySuccess, onPayFailure, options) {
                     type: 'POST',
                     data: {signed_request: signedRequest,
                            transaction_id: transactionId,
-                           payment_choice: $dialog.find('.payment_method:checked').val()},
+                           payment_choice: $dialog.find('.payment_method:checked').val(),
+                           csrfmiddlewaretoken: $dialog.find('[name=csrfmiddlewaretoken]').val()},
                     dataType: 'json',
                     success: function(data, textStatus, jqXHR) {
                         closeModal();
@@ -36,7 +37,8 @@ exports.buy = function(signedRequest, onPaySuccess, onPayFailure, options) {
 
     $.ajax({url: $('#pay-dialog').attr('data-start-url'),
             type: 'POST',
-            data: {signed_request: signedRequest},
+            data: {signed_request: signedRequest,
+                   csrfmiddlewaretoken: $('.popover').find('[name=csrfmiddlewaretoken]').val()},
             dataType: 'json',
             success: function(data, textStatus, jqXHR) {
                 var $dialog = $('.popover.active');

@@ -52,6 +52,7 @@
   <div class="p-content">
     <p class="action"></p>
     <form class="moz-payment">
+      {% csrf_token %}
       <div class="form-row">
         <input checked="checked" type="radio" class="payment_method" name="payment_method" value="carrier" />
         <label>Bill my T-Mobile account</label>
