@@ -131,6 +131,11 @@ def start_payment(request):
 def start_embedded_payment(request):
   return direct_to_template(request, 'embedded.html')
 
+
+def get_embedded_payment_form(request):
+  return direct_to_template(request, 'embedded_paypal_form.html')
+
+
 def init_embedded_payment(request):
   if True or request.session.has_key("verified_email"): # fake session
     if request.method == "POST":

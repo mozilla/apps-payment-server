@@ -14,17 +14,32 @@ exports.buy = function(signedRequest, onPaySuccess, onPayFailure, options) {
         header: '#pay-dialog > .p-header',
         content: '#pay-dialog > .p-content',
         processPayment: function(closeModal) {
-            var $dialog = $('.popover.active');
+            var $dialog = $('.popover.active'),
+                paymentChoice = $dialog.find('.payment_method:checked').val();
                 // form = $dialog.find('form.moz-payment').serialize();
             $.ajax({url: $('#pay-dialog').attr('data-submit-url'),
                     type: 'POST',
                     data: {signed_request: signedRequest,
                            transaction_id: transactionId,
-                           payment_choice: $dialog.find('.payment_method:checked').val(),
+                           payment_choice: paymentChoice,
                            csrfmiddlewaretoken: $dialog.find('[name=csrfmiddlewaretoken]').val()},
                     dataType: 'json',
                     success: function(data, textStatus, jqXHR) {
-                        closeModal();
+                        if (paymentChoice == 'paypal') {
+                            $.ajax({type: 'GET',
+                                    url: '/get_embedded_payment_form',
+                                    dataType: 'html',
+                                    success: function(data, textStatus, jqXHR) {
+                                        $dialog.find('.p-content').html(data);
+                                    },
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        console.log("failure");
+                                        console.log(textStatus);
+                                    }});
+                        } else {
+                            // Simulate immediate carrier payment.
+                            closeModal();
+                        }
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         console.log("failure");

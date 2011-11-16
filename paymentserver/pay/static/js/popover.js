@@ -68,7 +68,8 @@ $.fn.popover = function(options) {
     var offset = button.offset();
 
     // Calculate topOff
-    topOff = offset.top + buttonHeight + triangleSize;
+    // topOff = offset.top + buttonHeight + triangleSize;
+    topOff = $(window).scrollTop() + 26; //distance from top of the window
     var diffHeight = docHeight - (topOff + contentHeight + triangleSize);
     if (diffHeight < 0){
       //resize the floater
@@ -79,7 +80,8 @@ $.fn.popover = function(options) {
     var padding = 18;
 
     // Calculate leftOff
-    leftOff = offset.left + (buttonWidth - contentWidth)/2;
+    // leftOff = (buttonWidth - contentWidth)/2;
+    leftOff = ($(window).width() - contentWidth) / 2;
     var diffWidth = 0;
     if (leftOff < padding) {
       // out of the document at left
@@ -90,7 +92,7 @@ $.fn.popover = function(options) {
     }
 
     // position triangle
-    triangle.css("left", contentWidth/2 - triangleSize + diffWidth);
+    triangle.css("left", contentWidth/2 - triangleSize);
 
     floater.offset({
       top: topOff + options.offsetY,

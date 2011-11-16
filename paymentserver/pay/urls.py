@@ -14,6 +14,7 @@ urlpatterns = patterns(
     (r'^start_payment$', start_payment),
     (r'^start_preapproval$', start_preapproval),
     (r'^start_embedded_payment$', start_embedded_payment),
+    (r'^get_embedded_payment_form$', get_embedded_payment_form),
     (r'^init_embedded_payment$', init_embedded_payment),
     
     (r'^paypal/return$', paypal_return),
