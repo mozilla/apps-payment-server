@@ -113,7 +113,7 @@ body{
 }
 
 
-button {
+button, .button {
     background-color: #fff;
     border: 1px solid #bbb;
     padding: 10px 20px;
