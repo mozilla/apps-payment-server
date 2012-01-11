@@ -1,5 +1,5 @@
 /*
-This JS would be hosted by the Firefox Market to facilitate in-app purchases.
+This JS would be hosted by the Mozilla Marketplace to facilitate in-app purchases.
 */
 (function(exports) {
 "use strict";
@@ -66,4 +66,4 @@ exports.buy = function(signedRequest, onPaySuccess, onPayFailure, options) {
             }});
 };
 
-})(typeof exports === 'undefined' ? (this.fxmarket = {}) : exports);
+})(typeof exports === 'undefined' ? (this.mozmarket = {}) : exports);

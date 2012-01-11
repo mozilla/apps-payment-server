@@ -11,7 +11,7 @@ $(function() {
 
     $('.products button').click(function(evt) {
         var signedRequest = $(evt.currentTarget).attr('data-request');
-        fxmarket.buy(signedRequest, onPaySuccess, onPayFailure,
+        mozmarket.buy(signedRequest, onPaySuccess, onPayFailure,
                      {clickTarget: evt.currentTarget});
     });
 });
