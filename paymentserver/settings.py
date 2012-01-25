@@ -137,3 +137,7 @@ APP_OPERATOR_KEY = 'APP-123'
 APP_OPERATOR_SECRET = 'ailkdjfad8s07f509pyp9bojb[oho{UHGDO{UHGO_Uo96976'
 APP_OPERATOR_POSTBACK_URL = '/app/payment_suceeded'
 APP_SECRETS = {APP_OPERATOR_KEY: APP_OPERATOR_SECRET}
+
+# URL to the JS file for the app to include to make in-app payments.
+# By default this is the local reference implementation.
+IN_APP_PAYMENTS_JS = '/static/js/mozmarket.js'
