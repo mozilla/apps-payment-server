@@ -2,3 +2,4 @@
 *.sw[po]
 .DS_Store
 *.db
+paymentserver/settings_local.py

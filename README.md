@@ -14,3 +14,11 @@ To get things set up, run:
 To make the paypal redirects work you must currently run everything from:
 
     http://localhost:8380/
+
+To override settings copy the local settings file:
+
+    cp paymentserver/settings_local-dist.py paymentserver/settings_local.py
+
+And start up the server with that file:
+
+    python paymentserver/manage.py runserver --settings=paymentserver.settings_local 0.0.0.0:8380
