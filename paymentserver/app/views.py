@@ -47,4 +47,5 @@ class Product(object):
                 'productdata': "ABC123_DEF456_GHI_789.XYZ"
             }
         })
-        self.request_data = jwt.encode(request, settings.APP_OPERATOR_SECRET)
+        self.request_data = jwt.encode(request, settings.APP_OPERATOR_SECRET,
+                                       algorithm='HS256')
