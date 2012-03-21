@@ -1,6 +1,8 @@
 Design Notes on an In-App Payments API:
 ========================================
 
+See also: [end user documentation on MDN](https://developer.mozilla.org/en/Apps/In-app_payments).
+
 The goal of an in-app payments API is to allow web content to initiate a payment from the user to a web application, with these properties:
 
 1. The application does not receive any payment card data from the user
@@ -44,7 +46,7 @@ One system that satisfies these requirements would look like this (it's broadly 
 
 <pre>
     AppOperator: "Mozilla, please give me a secret.  My postback URL is http://app/postback"
-    
+
     Mozilla: "Okay, AppOperator, your key is ABC and your secret is 123456."
 </pre>
 
@@ -76,7 +78,7 @@ One system that satisfies these requirements would look like this (it's broadly 
     moz.buy(theRequestObject, onBuySuccess, onBuyFailure)
 </pre>
 
-5. The buy method opens a popup box (if no session with ```marketplace.mozilla.org``` is active) or a lightbox (if one is).  
+5. The buy method opens a popup box (if no session with ```marketplace.mozilla.org``` is active) or a lightbox (if one is).
 
 The flow once we hit the lightbox/popup box is:
 
@@ -157,7 +159,7 @@ Future Goals: Support for Web Activities
 
 The system described here assumes that the app supports only one payment API provider.  We could support more user choice by abstracting up a layer from here.  If, for example, the app called:
 
-    navigator.apps.startActivity ( new Activity ( PAY, supportedProviderList, requestCallback, 
+    navigator.apps.startActivity ( new Activity ( PAY, supportedProviderList, requestCallback,
         successCallback, failureCallback ) )
 
 ... and the browser presented a list of PAY-providers, perhaps filtered by supportedProviderList, invoking the request callback when the user picked one.  The request callback would have to do the JWT-generation (signing with the appropriate Payment Secret for the selected provider), and then return to the browser, who would deliver the call to the payment provider and continue the flow.
