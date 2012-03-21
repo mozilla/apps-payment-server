@@ -75,7 +75,7 @@ One system that satisfies these requirements would look like this (it's broadly 
 4. The App directs the user's browser to a JavaScript buy method with this Payment Request, this method is imported from a JavaScript file loaded from ```https://marketplace.mozilla.org```.  The ```buy``` method would take the Payment Request object, a success callback, and a failure callback.
 
 <pre>
-    moz.buy(theRequestObject, onBuySuccess, onBuyFailure)
+    mozmarket.buy(theRequestObject, onBuySuccess, onBuyFailure)
 </pre>
 
 5. The buy method opens a popup box (if no session with ```marketplace.mozilla.org``` is active) or a lightbox (if one is).
