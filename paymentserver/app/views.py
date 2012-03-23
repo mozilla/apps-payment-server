@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
+import calendar
 from decimal import Decimal
 import json
+import time
 
 from django.conf import settings
 from django.shortcuts import render
@@ -33,12 +34,14 @@ class Product(object):
         self.code = code
         self.name = name
         self.description = description
+        iat = calendar.timegm(time.gmtime())
+        exp = iat + 3600  # expires in 1 hour
         request = json.dumps({
             'iss': settings.APP_OPERATOR_KEY,
             'aud': "marketplace.mozilla.org",
             'typ': "mozilla/payments/pay/v1",
-            'exp': (datetime.now() + timedelta(hours=1)).isoformat(),
-            'iat': datetime.now().isoformat(),
+            'exp': exp,
+            'iat': iat,
             'request': {
                 'price': str(self.price),
                 'currency': "USD",
